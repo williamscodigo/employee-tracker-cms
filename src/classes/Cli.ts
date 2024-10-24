@@ -9,6 +9,17 @@ await connectToDb();
 
 // define the Cli class
 class Cli {
+  //static method to display logo 
+  static displayLogo(): void {
+    console.log('|_____________________________________________________|');
+    console.log('|                     WELCOME                         |');
+    console.log('|                       TO                            |');
+    console.log('|                 EMPLOYEE TRACKER                    |');
+    console.log('|_____________________________________________________|');
+  }
+
+  
+
   // method to view all departments
   viewAllDepartments(): void {
     console.log('Viewing all departments...\n');
