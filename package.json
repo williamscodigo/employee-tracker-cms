@@ -13,12 +13,11 @@
   "license": "MIT",
   "dependencies": {
     "dotenv": "^16.4.5",
-    "inquirer": "^9.2.19",
+    "inquirer": "8.2.4",
     "pg": "^8.11.3"
   },
   "devDependencies": {
-    "@faker-js/faker": "^9.0.3",
-    "@types/inquirer": "^9.0.7",
+    "@types/inquirer": "8.2.4",
     "@types/node": "^20.12.7",
     "@types/pg": "^8.11.6",
     "typescript": "^5.2.2"

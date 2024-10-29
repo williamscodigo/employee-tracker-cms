@@ -54,6 +54,11 @@ You can run this project in your local evironment, follow these steps:
 ```bash
     npm run start
 ```
+
+## Usage
+
+Walkthrough Video Link: 
+
 ## Technologies Used
 
 - JavaScript
