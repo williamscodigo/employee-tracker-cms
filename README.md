@@ -19,6 +19,16 @@ With the Employee Tracker, you can easily organize and plan your business by acc
 
 - Update Employee Role: Enable users to select an existing employee and update their role through a straightforward prompt, ensuring that employee records remain current and accurate.
 
+- Update employee managers.
+
+- View employees by manager.
+
+- View employees by department.
+
+- Delete departments, roles, and employees.
+
+- View the total utilized budget of a department, that is view the combined salaries of all employees in each department.
+
 ## Installation 
 
 You can run this project in your local evironment, follow these steps:
@@ -85,7 +95,7 @@ You can run this project in your local evironment, follow these steps:
 
 ## Usage
 
-Walkthrough Video Link: 
+Walkthrough Video Link: [https://drive.google.com/file/d/13RF4f9EKVKeQezWGRZyCAKLLu8U2mRqd/view?usp=sharing](https://drive.google.com/file/d/13RF4f9EKVKeQezWGRZyCAKLLu8U2mRqd/view?usp=sharing)
 
 ## Technologies Used
 
