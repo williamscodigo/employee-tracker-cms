@@ -515,7 +515,7 @@ deleteEmployee(): void {
           name: 'mainMenu',
           message:
             'What would you like to do?',
-          choices: ['View All Departments', 'View All Roles', 'View All Employees', 'View Employees By Manager', 'View Employees By Department', 'View All Departments Budget', 'Add Department', 'Add Role', 'Add Employee', 'Update Employee Role', 'Update Employee Manager', 'Delete Department', 'Delete Role', 'Delete Employee', 'Quit'],
+          choices: ['View All Departments', 'View All Roles', 'View All Employees', 'View Employees By Manager', 'View Employees By Department', 'View Budget (All Departments)', 'Add Department', 'Add Role', 'Add Employee', 'Update Employee Role', 'Update Employee Manager', 'Delete Department', 'Delete Role', 'Delete Employee', 'Quit'],
         },
       ])
       .then((answers) => {
@@ -537,7 +537,7 @@ deleteEmployee(): void {
           case 'View Employees By Department':
             this.viewEmployeesByDepartment();
             break;
-          case 'View All Departments Budget':
+          case 'View Budget (All Departments)':
             this.viewDepartmentBudget();
             break;
           case 'Add Department':
