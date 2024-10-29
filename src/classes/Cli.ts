@@ -389,7 +389,7 @@ updateEmployeeManager(): void {
           name: 'mainMenu',
           message:
             'What would you like to do?',
-          choices: ['View All Departments', 'View All Roles', 'View All Employees', 'View Employees By Manager', 'View Employees By Department', 'Add Department', 'Add Role', 'Add Employee', 'Update Employee Role', 'Update Employee Manager', 'Quit'],
+          choices: ['View All Departments', 'View All Roles', 'View All Employees', 'View Employees By Manager', 'View Employees By Department', 'Add Department', 'Add Role', 'Add Employee', 'Update Employee Role', 'Update Employee Manager', 'Delete Employee', 'Delete Department', 'Delete Role', 'Quit'],
         },
       ])
       .then((answers) => {
