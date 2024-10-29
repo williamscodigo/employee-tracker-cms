@@ -71,7 +71,7 @@ viewAllEmployees(): void {
     FROM 
       employee e
     JOIN 
-      role r ON e.id = r.id
+      role r ON e.role_id = r.id
     JOIN 
       department d ON r.department_id = d.id
     LEFT JOIN 
@@ -84,6 +84,104 @@ viewAllEmployees(): void {
     } else if (result) {
       console.table(result.rows); // Displays the data in a table format
       this.startCliMenu(); // Returns to the main CLI menu
+    }
+  });
+}
+
+//method to view employees by manager - extra*
+viewEmployeesByManager(): void {
+  // Query to get all employees for the manager selection list
+  pool.query('SELECT id, first_name, last_name FROM employee', (err, employeesResult) => {
+    if (err) {
+      console.log(err);
+    } else if (employeesResult) {
+      inquirer
+        .prompt([
+          {
+            type: 'list',
+            name: 'managerName',
+            message: 'Which manager would you like to view employees for?',
+            choices: employeesResult.rows.map((employee) => employee.first_name + ' ' + employee.last_name),
+          },
+        ])
+        .then((answers) => {
+          const managerId = employeesResult.rows.find((employee) => employee.first_name + ' ' + employee.last_name === answers.managerName).id;
+          
+          // Query to select employees with required fields
+          pool.query(
+            `SELECT e.id AS "Employee ID", 
+                    e.first_name AS "First Name", 
+                    e.last_name AS "Last Name", 
+                    r.title AS "Title", 
+                    d.name AS "Department", 
+                    r.salary AS "Salary", 
+                    COALESCE(m.first_name || ' ' || m.last_name, 'No Manager') AS "Manager Name"
+             FROM employee e
+             JOIN role r ON e.role_id = r.id
+             JOIN department d ON r.department_id = d.id
+             LEFT JOIN employee m ON e.manager_id = m.id
+             WHERE e.manager_id = $1`,
+            [managerId],
+            (err, result) => {
+              if (err) {
+                console.log(err);
+              } else if (result) {
+                console.table(result.rows);
+                this.startCliMenu();
+              }
+            }
+          );
+        });
+    }
+  });
+}
+
+
+
+//method to view employees by department - extra*
+viewEmployeesByDepartment(): void {
+  // Query to get all departments for selection
+  pool.query('SELECT * FROM department', (err, result) => {
+    if (err) {
+      console.log(err);
+    } else if (result) {
+      inquirer
+        .prompt([
+          {
+            type: 'list',
+            name: 'departmentName',
+            message: 'Which department would you like to view employees for?',
+            choices: result.rows.map((department) => department.name),
+          },
+        ])
+        .then((answers) => {
+          const departmentId = result.rows.find((department) => department.name === answers.departmentName).id;
+          
+          // Query to select employees with required fields
+          pool.query(
+            `SELECT e.id AS "Employee ID", 
+                    e.first_name AS "First Name", 
+                    e.last_name AS "Last Name", 
+                    r.title AS "Title", 
+                    d.name AS "Department", 
+                    r.salary AS "Salary", 
+                    COALESCE(m.first_name || ' ' || m.last_name, 'No Manager') AS "Manager Name"
+             FROM employee e
+             JOIN role r ON e.role_id = r.id
+             JOIN department d ON r.department_id = d.id
+             LEFT JOIN employee m ON e.manager_id = m.id
+             WHERE d.id = $1`,
+            [departmentId],
+            (err, result) => {
+              if (err) {
+                console.log(err);
+              } else if (result) {
+                console.table(result.rows);
+                this.startCliMenu();
+              }
+            }
+          );
+        });
     }
   });
 }
@@ -192,6 +290,7 @@ async addEmployee(): Promise<void> {
     const roleId = roles.find((role) => role.title === answers.employeeRole).id;
     const managerId = answers.employeeManager === 'None' ? null : employees.find((employee) => employee.first_name + ' ' + employee.last_name === answers.employeeManager).id;
 
+    
     await pool.query('INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES ($1, $2, $3, $4)', [answers.employeeFirstName, answers.employeeLastName, roleId, managerId]);
 
     console.log('Employee added successfully');
@@ -201,7 +300,7 @@ async addEmployee(): Promise<void> {
   }
 }
 
-//method to update an employee role
+//method to update an employee role 
 updateEmployeeRole(): void {
   pool.query('SELECT * FROM employee', (err, employeesResult) => {
     if (err) {console.log(err);
@@ -242,6 +341,42 @@ updateEmployeeRole(): void {
   });
 }
 
+//method to update an employee manager - extra*
+updateEmployeeManager(): void {
+  pool.query('SELECT * FROM employee', (err, employeesResult) => {
+    if (err) {console.log(err);
+    } else if (employeesResult){
+      inquirer
+      .prompt
+      ([
+        {
+          type: 'list',
+          name: 'employeeName',
+          message: 'Which employee would you like to update?',
+          choices: employeesResult.rows.map((employee) => employee.first_name + ' ' + employee.last_name),
+        },
+        {
+          type: 'list',
+          name: 'managerName',
+          message: 'Who is the employee\'s new manager?',
+          choices: ['None', ...employeesResult.rows.map((employee) => employee.first_name + ' ' + employee.last_name)],
+        },
+      ])
+      .then((answers) => {
+        const employeeId = employeesResult.rows.find((employee) => employee.first_name + ' ' + employee.last_name === answers.employeeName).id;
+        const managerId = answers.managerName === 'None' ? null : employeesResult.rows.find((employee) => employee.first_name + ' ' + employee.last_name === answers.managerName).id;
+        pool.query('UPDATE employee SET manager_id = $1 WHERE id = $2', [managerId, employeeId], (err, result) => {
+          if (err) {console.log(err);
+          } else if (result){
+            console.log('Employee manager updated successfully');
+            this.startCliMenu();
+          }
+        });
+      });
+    }
+  });
+}
+
 
 
 
@@ -254,7 +389,7 @@ updateEmployeeRole(): void {
           name: 'mainMenu',
           message:
             'What would you like to do?',
-          choices: ['View All Departments', 'View All Roles', 'View All Employees', 'Add Department', 'Add Role', 'Add Employee', 'Update Employee Role', 'Quit'],
+          choices: ['View All Departments', 'View All Roles', 'View All Employees', 'View Employees By Manager', 'View Employees By Department', 'Add Department', 'Add Role', 'Add Employee', 'Update Employee Role', 'Update Employee Manager', 'Quit'],
         },
       ])
       .then((answers) => {
@@ -270,6 +405,12 @@ updateEmployeeRole(): void {
           case 'View All Employees':
             this.viewAllEmployees();
             break;
+          case 'View Employees By Manager':
+            this.viewEmployeesByManager();
+            break;
+          case 'View Employees By Department':
+            this.viewEmployeesByDepartment();
+            break;
           case 'Add Department':
             this.addDepartment();
             break;
@@ -281,6 +422,9 @@ updateEmployeeRole(): void {
             break;
           case 'Update Employee Role':
             this.updateEmployeeRole();
+            break;
+          case 'Update Employee Manager':
+            this.updateEmployeeManager();
             break;
           case 'Quit':
             console.log('Goodbye!');
