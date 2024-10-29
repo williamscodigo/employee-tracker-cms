@@ -377,6 +377,110 @@ updateEmployeeManager(): void {
   });
 }
 
+//method to delete a department -- extra*
+deleteDepartment(): void {
+  pool.query('SELECT * FROM department', (err, result) => {
+    if (err) {console.log(err);
+    } else if (result){
+      inquirer
+      .prompt
+      ([
+        {
+          type: 'list',
+          name: 'departmentName',
+          message: 'Which department would you like to delete? (Note: All roles and employee under this department will also be deleted!)',
+          choices: ['None', ...result.rows.map((department) => department.name)],
+        },
+      ])
+      .then((answers) => {
+        if(answers.departmentName === 'None'){
+          console.log('No department deleted');
+          this.startCliMenu();
+          return;
+        }
+
+        const departmentId = result.rows.find((department) => department.name === answers.departmentName).id;
+        pool.query('DELETE FROM department WHERE id = $1', [departmentId], (err, result) => {
+          if (err) {console.log(err);
+          } else if (result){
+            console.log('Department deleted successfully');
+            this.startCliMenu();
+          }
+        });
+      });
+    }
+  });
+}
+
+//method to delete a role -- extra*
+deleteRole(): void {
+  pool.query('SELECT * FROM role', (err, result) => {
+    if (err) {console.log(err);
+    } else if (result){
+      inquirer
+      .prompt
+      ([
+        {
+          type: 'list',
+          name: 'roleTitle',
+          message: 'Which role would you like to delete? (Note: All employees with this role will also be assigned to a role of null)',
+          choices: ['None', ...result.rows.map((role) => role.title)],
+        },
+      ])
+      .then((answers) => {
+        if(answers.roleTitle === 'None'){
+          console.log('No role deleted');
+          this.startCliMenu();
+          return;
+        }
+
+        const roleId = result.rows.find((role) => role.title === answers.roleTitle).id;
+        pool.query('DELETE FROM role WHERE id = $1', [roleId], (err, result) => {
+          if (err) {console.log(err);
+          } else if (result){
+            console.log('Role deleted successfully');
+            this.startCliMenu();
+          }
+        });
+      });
+    }
+  });
+}
+
+//method to delete an employee -- extra*
+deleteEmployee(): void {
+  pool.query('SELECT * FROM employee', (err, result) => {
+    if (err) {console.log(err);
+    } else if (result){
+      inquirer
+      .prompt
+      ([
+        {
+          type: 'list',
+          name: 'employeeName',
+          message: 'Which employee would you like to delete? (Note: If this employee is a manager, all employees under them will be reassigned to a manager of null)',
+          choices: ['None', ...result.rows.map((employee) => employee.first_name + ' ' + employee.last_name)],
+        },
+      ])
+      .then((answers) => {
+        if(answers.employeeName === 'None'){
+          console.log('No employee deleted');
+          this.startCliMenu();
+          return;
+        }
+
+        const employeeId = result.rows.find((employee) => employee.first_name + ' ' + employee.last_name === answers.employeeName).id;
+        pool.query('DELETE FROM employee WHERE id = $1', [employeeId], (err, result) => {
+          if (err) {console.log(err);
+          } else if (result){
+            console.log('Employee deleted successfully');
+            this.startCliMenu();
+          }
+        });
+      });
+    }
+  });
+}
 
 
 
@@ -389,7 +493,7 @@ updateEmployeeManager(): void {
           name: 'mainMenu',
           message:
             'What would you like to do?',
-          choices: ['View All Departments', 'View All Roles', 'View All Employees', 'View Employees By Manager', 'View Employees By Department', 'Add Department', 'Add Role', 'Add Employee', 'Update Employee Role', 'Update Employee Manager', 'Delete Employee', 'Delete Department', 'Delete Role', 'Quit'],
+          choices: ['View All Departments', 'View All Roles', 'View All Employees', 'View Employees By Manager', 'View Employees By Department', 'Add Department', 'Add Role', 'Add Employee', 'Update Employee Role', 'Update Employee Manager', 'Delete Department', 'Delete Role', 'Delete Employee', 'Quit'],
         },
       ])
       .then((answers) => {
@@ -425,6 +529,15 @@ updateEmployeeManager(): void {
             break;
           case 'Update Employee Manager':
             this.updateEmployeeManager();
+            break;
+          case 'Delete Department':
+            this.deleteDepartment();
+            break;
+          case 'Delete Role':
+            this.deleteRole();
+            break;
+          case 'Delete Employee':
+            this.deleteEmployee();
             break;
           case 'Quit':
             console.log('Goodbye!');
