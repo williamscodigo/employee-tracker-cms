@@ -186,6 +186,28 @@ viewEmployeesByDepartment(): void {
   });
 }
 
+//view department budget --- extra*
+viewDepartmentBudget(): void {
+  pool.query(
+    `SELECT d.name AS "Department", 
+            COUNT(e.id) AS "Employee Count",
+            SUM(r.salary) AS "Total Budget"
+     FROM department d
+     JOIN role r ON d.id = r.department_id
+     JOIN employee e ON r.id = e.role_id
+     GROUP BY d.name`,
+    (err, result) => {
+      if (err) {
+        console.log(err);
+      } else if (result) {
+        console.table(result.rows);
+        this.startCliMenu();
+      }
+    }
+  );
+}
+
+
 
 //method to add a department
 addDepartment(): void {
@@ -493,7 +515,7 @@ deleteEmployee(): void {
           name: 'mainMenu',
           message:
             'What would you like to do?',
-          choices: ['View All Departments', 'View All Roles', 'View All Employees', 'View Employees By Manager', 'View Employees By Department', 'Add Department', 'Add Role', 'Add Employee', 'Update Employee Role', 'Update Employee Manager', 'Delete Department', 'Delete Role', 'Delete Employee', 'Quit'],
+          choices: ['View All Departments', 'View All Roles', 'View All Employees', 'View Employees By Manager', 'View Employees By Department', 'View All Departments Budget', 'Add Department', 'Add Role', 'Add Employee', 'Update Employee Role', 'Update Employee Manager', 'Delete Department', 'Delete Role', 'Delete Employee', 'Quit'],
         },
       ])
       .then((answers) => {
@@ -514,6 +536,9 @@ deleteEmployee(): void {
             break;
           case 'View Employees By Department':
             this.viewEmployeesByDepartment();
+            break;
+          case 'View All Departments Budget':
+            this.viewDepartmentBudget();
             break;
           case 'Add Department':
             this.addDepartment();
