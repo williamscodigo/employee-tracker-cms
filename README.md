@@ -41,15 +41,43 @@ You can run this project in your local evironment, follow these steps:
     npm install
 ```
 
-4. Make sure you modify .env file (create file if it doesn't exist):
+4. Navigate to the db Directory:
+
+```bash
+    cd db
+```
+
+5. connect to postgres using your credentials (Enter password when prompted):
+
+```bash
+    psql -U username
+```
+
+6. run the following commands to create db, tables, and seed it:
+
+```bash
+    > \i schema.sql
+    > \i seed.sql
+```
+
+
+7. With database created and seeded, stop current connection (ctrl + c), navigate back to Project Directory:
+
+```bash
+    cd ..
+```
+
+8. Make sure you modify .env file (create file if it doesn't exist):
 
 ```
     DB_NAME=db_name
     DB_USER=username
     DB_PASSWORD=password
+    DB_HOST=localhost
+    DB_PORT=5432
 ```
 
-5. Start the front-end and server-side apps:
+9. Start the app:
 
 ```bash
     npm run start
